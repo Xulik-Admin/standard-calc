@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculator</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="container">
+        <div class="main__up">
+            <span class="span__up" id="expressionLine"></span>
+            <span class="span__down" id="resultLine">0</span>
+            <div class="up__down"></div>
+        </div>
+        <div class="buttons">
+            <button class="buttons__button">%</button>
+            <button class="buttons__button" onclick="clearResultLine()">CE</button>
+            <button class="buttons__button" onclick="clearAll()">C</button>
+            <button class="buttons__button" onclick="deleteSymbol()">⇍</button>
+            <button class="buttons__button">¹⁄ₓ</button>
+            <button class="buttons__button">x²</button>
+            <button class="buttons__button">2корx</button>
+            <button class="buttons__button" onclick="inputSign('÷')">÷</button>
+            <button class="buttons__button number" onclick="inputNumber(7)">7</button>
+            <button class="buttons__button number" onclick="inputNumber(8)">8</button>
+            <button class="buttons__button number" onclick="inputNumber(9)">9</button>
+            <button class="buttons__button" onclick="inputSign('×')">×</button>
+            <button class="buttons__button number" onclick="inputNumber(4)">4</button>
+            <button class="buttons__button number" onclick="inputNumber(5)">5</button>
+            <button class="buttons__button number" onclick="inputNumber(6)">6</button>
+            <button class="buttons__button" onclick="inputSign('﹣')">﹣</button>
+            <button class="buttons__button number" onclick="inputNumber(1)">1</button>
+            <button class="buttons__button number" onclick="inputNumber(2)">2</button>
+            <button class="buttons__button number" onclick="inputNumber(3)">3</button>
+            <button class="buttons__button" onclick="inputSign('﹢')">﹢</button>
+            <button class="buttons__button number">+/-</button>
+            <button class="buttons__button number" onclick="inputNumber(0)">0</button>
+            <button class="buttons__button number" onclick="comma()">.</button>
+            <button class="buttons__button equals" onclick="equals()">=</button>
+        </div>
+    </div>
+
+    <script src="index.js"></script>
+</body>
+
+</html>
