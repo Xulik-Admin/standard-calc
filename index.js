@@ -1,150 +1,168 @@
 "use strict"
 
-let currentValue = '0', previousValue = '', operator = '', point = false;
+let currentValue = '';
+let previousValue = '';
+let operator = '';
+let point = false;
 
 const resultLine = document.getElementById('resultLine');
 const expressionLine = document.getElementById('expressionLine');
 
 //действия пользователя
-let userActions = ['0'];
+let userActions = [];
 
 function inputNumber(number) {
-
-//обнулить значение если, происходит ввод после расчетов
     if(userActions.at(-1) === '='){
-        clearAll()
+        clearAll();
     }
 
-    if(currentValue === '0'){
-        if(number === '00'){
+    if(number === '0' || number === '00') {
+        if(currentValue === '') {
             return;
         }
-        currentValue = number;
-        userActions = [number]
-    } else {
-        currentValue += number;
-        userActions.push(number)
     }
+
+    currentValue += number;
+
     resultLine.textContent = currentValue;
+
+    userActions.push(number);
 }
 
 function decimalPoint() {
     if(userActions.at(-1) === '='){
-        clearAll()
-        currentValue += '.';
-
-        resultLine.textContent = currentValue;
-        return;
+        clearAll();
     }
 
-    if (!point){
+    if(!point){
+        if(currentValue === '') {
+            currentValue += 0;
+
+            userActions.push('0')
+        }
+
         currentValue += '.';
+        point = true;
+
         resultLine.textContent = currentValue;
 
         userActions.push('.')
-        point = true;
     }
 }
 
-
 function inputSign(sign) {
-    if(operator && currentValue){
-        currentValue = equalsOperator(operator);
-
-        expressionLine.textContent = currentValue + sign;
-        resultLine.textContent = currentValue;
+    //если после '=' нажили один из операторов
+    if(operator && currentValue && userActions.at(-1) === '=') {
         operator = sign;
 
-        userActions.push(sign)
-        currentValue = '0';
-    } else {
+        expressionLine.textContent = previousValue + operator;
+    }
+    //если нажимаются только операторы, автоматически считает
+    else if(operator && currentValue && previousValue) {
+        currentValue = equalsOperator(operator);
+
         operator = sign;
 
         expressionLine.textContent = currentValue + operator;
-        previousValue = currentValue;
-        currentValue = '0';
-
-        userActions.push(sign)
-        point = false;
+        resultLine.textContent = currentValue;
     }
+    //если меняются операторы после введения первого значения
+    else if(operator && previousValue) {
+        operator = sign;
+
+        expressionLine.textContent = previousValue + operator;
+    } else {
+        previousValue = currentValue;
+
+        operator = sign;
+
+        expressionLine.textContent = previousValue + operator;
+    }
+
+    currentValue = '';
+    point = false;
+
+    userActions.push(sign)
 }
 
 function equals() {
-    if(currentValue === '') currentValue = previousValue;
-
-    expressionLine.textContent = previousValue + operator + currentValue + '=';
-
-    equalsOperator(operator);
-
-    if(!operator) {
-        resultLine.textContent = currentValue;
-    } else {
-        resultLine.textContent = previousValue;
+    //написание '23 + ='
+    if(currentValue === '') {
+        currentValue = previousValue;
     }
 
-    userActions.push('=')
+    expressionLine.textContent = previousValue + operator + currentValue + '=';
+    resultLine.textContent = equalsOperator(operator);
+
     point = false;
-    console.log(userActions)
+
+    userActions.push('=');
+
+    console.table(userActions)
 }
 
 function equalsOperator(operator) {
-    if(userActions.at(-1) !== '=' || userActions.at(-2) === '='){
-        switch (operator) {
-            case '﹢':
-                previousValue = +previousValue + +currentValue;
-                break;
+    switch (operator) {
+        case '﹢':
+            previousValue = +previousValue + +currentValue;
+            break;
 
-            case '﹣':
-                previousValue = +previousValue - +currentValue;
-                break;
+        case '﹣':
+            previousValue = +previousValue - +currentValue;
+            break;
 
-            case '×':
-                previousValue = +previousValue * +currentValue;
-                break;
+        case '×':
+            previousValue = +previousValue * +currentValue;
+            break;
 
-            case '÷':
-                previousValue = +previousValue / +currentValue;
-                break;
+        case '÷':
+            previousValue = +previousValue / +currentValue;
+            break;
 
-            case '%':
-                previousValue = +previousValue * (+currentValue * 0.01);
-                break;
-            case '':
-                previousValue = currentValue;
-        }
-
-        addHistory(expressionLine.textContent, previousValue, operator)
+        case '%':
+            previousValue = +previousValue * (+currentValue * 0.01);
+            break;
+           //для коректной обработки '23 ='
+        case '':
+            previousValue = currentValue;
+            break;
     }
+
+    addHistory(expressionLine.textContent, previousValue, operator)
+
     return previousValue;
 }
 
 function clearAll() {
-    currentValue = '0';
+    currentValue = '';
     previousValue = '';
     operator = '';
-    userActions = [];
     point = false;
 
     expressionLine.textContent = '';
-    resultLine.textContent = currentValue;
+    resultLine.textContent = '0';
+
+    userActions = [];
 }
 
 function deleteSymbol() {
 
     if(currentValue.length === 1){
-        currentValue = '0'
+        currentValue = '';
+
+        resultLine.textContent = '0';
     }
 
     if(currentValue.length > 1){
         currentValue = currentValue.slice(0, -1);
-    }
 
-    resultLine.textContent = currentValue;
+        resultLine.textContent = currentValue;
+    }
 }
 
 const history = document.getElementById('history-calculator');
 
-function addHistory(expression, result, sing, current) {
+function addHistory(expression, result, sing) {
     const button = document.createElement('div');
     const spanExpression = document.createElement('span');
     const spanResult = document.createElement('span');
