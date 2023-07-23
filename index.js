@@ -55,6 +55,7 @@ function inputSign(sign) {
         resultLine.textContent = currentValue;
         operator = sign;
 
+        userActions.push(sign)
         currentValue = '0';
     } else {
         operator = sign;
@@ -87,28 +88,33 @@ function equals() {
 }
 
 function equalsOperator(operator) {
-    switch (operator) {
-        case '﹢':
-            previousValue = +previousValue + +currentValue;
-            break;
+    if(userActions.at(-1) !== '=' || userActions.at(-2) === '='){
+        switch (operator) {
+            case '﹢':
+                previousValue = +previousValue + +currentValue;
+                break;
 
-        case '﹣':
-            previousValue = +previousValue - +currentValue;
-            break;
+            case '﹣':
+                previousValue = +previousValue - +currentValue;
+                break;
 
-        case '×':
-            previousValue = +previousValue * +currentValue;
-            break;
+            case '×':
+                previousValue = +previousValue * +currentValue;
+                break;
 
-        case '÷':
-            previousValue = +previousValue / +currentValue;
-            break;
+            case '÷':
+                previousValue = +previousValue / +currentValue;
+                break;
 
-        case '%':
-            previousValue = +previousValue * (+currentValue * 0.01);
-            break;
+            case '%':
+                previousValue = +previousValue * (+currentValue * 0.01);
+                break;
+            case '':
+                previousValue = currentValue;
+        }
+
+        addHistory(expressionLine.textContent, previousValue, operator)
     }
-
     return previousValue;
 }
 
@@ -134,4 +140,35 @@ function deleteSymbol() {
     }
 
     resultLine.textContent = currentValue;
+}
+
+const history = document.getElementById('history-calculator');
+
+function addHistory(expression, result, sing, current) {
+    const button = document.createElement('div');
+    const spanExpression = document.createElement('span');
+    const spanResult = document.createElement('span');
+
+    button.className = 'history-calculator__button';
+    spanExpression.className = 'history-calculator__expression';
+    spanResult.className = 'history-calculator__result';
+
+    spanExpression.textContent = expression;
+    spanResult.textContent = result;
+
+    button.appendChild(spanExpression);
+    button.appendChild(spanResult);
+
+    history.appendChild(button);
+
+    button.addEventListener('click', ()=> {
+        expressionLine.textContent = spanExpression.textContent;
+        resultLine.textContent = spanResult.textContent;
+        operator = sing;
+        previousValue = spanResult.textContent;
+    })
+}
+
+function clearHistory() {
+    history.textContent = '';
 }
